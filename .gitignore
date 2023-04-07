@@ -1,1 +1,7 @@
 models/
+results/*
+dataset/test/*
+dataset/main/
+dataset/authorized/*
+dataset/cropped_authorized/*
+src/__pycache__
