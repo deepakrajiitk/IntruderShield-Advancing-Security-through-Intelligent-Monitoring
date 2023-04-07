@@ -32,14 +32,15 @@ pip install -r requirements.txt
 
 ```bash
 python model_download.py
+```
 
-1. Generate embeddings 
+2. Generate embeddings 
 
 ```bash
 python get_embeddings.py
 ```
 
-2. perform face detection and recognition on a CCTV video, simply run:
+3. perform face detection and recognition on a CCTV video, simply run:
 
 ``` bash
 python recognizer.py
