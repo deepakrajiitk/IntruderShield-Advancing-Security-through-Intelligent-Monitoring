@@ -28,6 +28,11 @@ pip install -r requirements.txt
 
 ## Usage
 
+1. Download insightface model
+
+```bash
+python model_download.py
+
 1. Generate embeddings 
 
 ```bash
