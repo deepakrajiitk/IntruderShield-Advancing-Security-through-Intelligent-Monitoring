@@ -21,7 +21,7 @@ def findCosineDistance(vector1, vector2):
     c = np.dot(vec2.T, vec2)
     return 1 - (a/(np.sqrt(b)*np.sqrt(c)))
 
-def main(args):
+def recognizer(args):
     input_dir = args.input_dir
     output_dir = args.output_dir
     embed_dir = args.embed_dir
@@ -50,6 +50,13 @@ def main(args):
     output_dir = os.path.join(output_dir, f"run{run_number}")
     os.makedirs(output_dir)
 
+    # Create the logs file if it doesn't exist
+    logs_file = os.path.join(output_dir, 'logs.txt')
+    if not os.path.exists(logs_file):
+        open(logs_file, 'w').close()
+
+
+
     # Loop over the images in the input directory
     for filename in os.listdir(input_dir):
         # Load the image
@@ -59,7 +66,8 @@ def main(args):
 
         # Detect the faces in the image
         faces = RetinaFace.detect_faces(img, threshold=confidence_thresh)
-
+        known = []
+        unknown_count = 0
         if isinstance(faces, dict):
             # Loop over the detected faces and recognize the persons
             for i, face in enumerate(faces):
@@ -79,31 +87,44 @@ def main(args):
                     sim = rec.compute_sim(feat1, feat2)
                     if sim<0.15:
                         conclu = 'They are NOT the same person'
-                    elif sim>=0.15 and sim<0.28 and sim>max_sim:
-                        name = names[i]+"**"
-                        max_sim = sim
-                        conclu = 'They are LIKELY TO be the same person'
+                    # elif sim>=0.15 and sim<0.28 and sim>max_sim:
+                    #     name = names[i]+"**"
+                    #     max_sim = sim
+                    #     conclu = 'They are LIKELY TO be the same person'
                     elif sim>max_sim:
                         name = names[i]
                         max_sim = sim
                         conclu = 'They ARE the same person'
 
+                if name!="Unknown":
+                    known.append(name)
+                else:
+                    unknown_count += 1
+
                 # Draw a rectangle on the face in the image and write the name of the person above the rectangle
                 cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
                 cv2.putText(img, name, (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        
+        log1 = "known persons are: " + ', '.join(str(i) for i in known)
+        log2 = "total unknows are: " + str(unknown_count)
+        # Append the string to the logs file
+        with open(logs_file, 'a') as f:
+            f.write(log1 + '\n')
+            f.write(log2 + '\n')
+
 
         # Save the result image in the output directory
         output_path = os.path.join(output_dir, filename)
         cv2.imwrite(output_path, img)
 
 
-ap = argparse.ArgumentParser()
-ap.add_argument('--input-dir', default='../dataset/test/ch24', help='path to the input directory containing the images to be recognized')
-ap.add_argument('--output-dir', default='../results', help='path to the output directory where the result images will be saved')
-ap.add_argument('--embed-dir', default='../dataset/cropped_authorized', help='path to the directory containing the authorized embeddings')
-ap.add_argument('--rec-model-name', default='w600k_r50.onnx', help='recognizer model name')
-ap.add_argument('--detector-thres', default=0.8, help='confidence threshold for face detection')
+# ap = argparse.ArgumentParser()
+# ap.add_argument('--input-dir', default='../dataset/test/ch24', help='path to the input directory containing the images to be recognized')
+# ap.add_argument('--output-dir', default='../results', help='path to the output directory where the result images will be saved')
+# ap.add_argument('--embed-dir', default='../dataset/cropped_authorized', help='path to the directory containing the authorized embeddings')
+# ap.add_argument('--rec-model-name', default='w600k_r50.onnx', help='recognizer model name')
+# ap.add_argument('--detector-thres', default=0.8, help='confidence threshold for face detection')
 
-args = ap.parse_args()
+# args = ap.parse_args()
 
-main(args)
+# recognizer(args)

@@ -1,4 +1,21 @@
 import os
+# from twilio.rest import Client
+
+
+def sendSMS(name, roomnumber, msg):
+    account_sid = 'ACc7611854961d275d9f71aea2a5540781'
+    auth_token = 'b406726163d4a445335a2e7ffeb31a0e'
+    client = Client(account_sid, auth_token)
+
+    # Send a message using the Twilio API
+    message = client.messages.create(
+        to='+919643225192',  # recipient's phone number
+        from_='+15074172693',  # your Twilio phone number
+        body=msg
+    )
+
+    # Print the message ID
+    print('Message sent with ID:', message.sid)
 
 def create_directory(username):
     parent_dir = os.path.dirname(os.path.abspath(__file__))
