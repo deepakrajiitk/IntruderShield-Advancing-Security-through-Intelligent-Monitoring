@@ -28,13 +28,19 @@ pip install -r requirements.txt
 
 ## Usage
 
-1. Generate embeddings 
+1. Download insightface model
+
+```bash
+python model_download.py
+```
+
+2. Generate embeddings 
 
 ```bash
 python get_embeddings.py
 ```
 
-2. perform face detection and recognition on a CCTV video, simply run:
+3. perform face detection and recognition on a CCTV video, simply run:
 
 ``` bash
 python recognizer.py
