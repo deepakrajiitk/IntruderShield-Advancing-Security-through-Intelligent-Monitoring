@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Upload Photos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    <center>
+        <h1>Upload Photos for {{ username }}</h1>
+    </center>
+    <form action="{{ url_for('upload_photos_route', username=username) }}" method="POST" enctype="multipart/form-data">
+      <label for="photos">Select Photos:</label>
+      <input type="file" id="photos" name="photos" accept="image/*" multiple><br><br>
+      <label for="text_input">Authorized Rooms:</label>
+      <input type="text" id="text_input" name="text_input"><br><br>
+      <input type="submit" value="Upload">
+    </form>
+  </body>
+</html>

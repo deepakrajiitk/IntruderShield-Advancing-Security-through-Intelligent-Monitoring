@@ -5,6 +5,7 @@ from retinaface import RetinaFace
 import onnxruntime as ort
 from arcface_onnx import ArcFaceONNX
 import os.path as osp
+import matplotlib.pyplot as plt
 import argparse
 
 
@@ -22,7 +23,6 @@ def findCosineDistance(vector1, vector2):
     return 1 - (a/(np.sqrt(b)*np.sqrt(c)))
 
 def main(args):
-    input_dir = args.input_dir
     output_dir = args.output_dir
     embed_dir = args.embed_dir
     confidence_thresh = float(args.detector_thres)
@@ -50,12 +50,28 @@ def main(args):
     output_dir = os.path.join(output_dir, f"run{run_number}")
     os.makedirs(output_dir)
 
-    # Loop over the images in the input directory
-    for filename in os.listdir(input_dir):
-        # Load the image
-        img_path = os.path.join(input_dir, filename)
-        img = cv2.imread(img_path)
-        print("running on ", img_path)
+    # Open the RTSP stream
+    stream_url = args.rtsp_url
+    cap = cv2.VideoCapture(stream_url)
+
+    # Initialize the frame counter
+    frame_count = 0
+
+
+    # Continuously read frames from the RTSP stream
+    while True:
+        ret, img = cap.read()
+        if not ret:
+            break
+
+        # Increment the frame counter
+        frame_count += 1
+
+        # Only process every 10th frame
+        if frame_count % 30 != 0:
+            continue
+
+        print("running")
 
         # Detect the faces in the image
         faces = RetinaFace.detect_faces(img, threshold=confidence_thresh)
@@ -92,9 +108,22 @@ def main(args):
                 cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
                 cv2.putText(img, name, (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-        # Save the result image in the output directory
-        output_path = os.path.join(output_dir, filename)
+        # # Display the result image
+        # cv2.namedWindow("window", cv2.WINDOW_NORMAL)
+        # cv2.imshow('window', img)
+        # cv2.waitKey(1)
+        # Display the result image
+        # plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+        # plt.show(block=False)
+        # plt.pause(0.1)
+         # Save the result image in the output directory
+        output_path = os.path.join(output_dir, str(frame_count)+".jpg")
         cv2.imwrite(output_path, img)
+
+    # Release the resources
+    cap.release()
+    # cv2.destroyAllWindows()
+
 
 
 ap = argparse.ArgumentParser()
@@ -103,7 +132,10 @@ ap.add_argument('--output-dir', default='../results', help='path to the output d
 ap.add_argument('--embed-dir', default='../dataset/cropped_authorized', help='path to the directory containing the authorized embeddings')
 ap.add_argument('--rec-model-name', default='w600k_r50.onnx', help='recognizer model name')
 ap.add_argument('--detector-thres', default=0.8, help='confidence threshold for face detection')
+ap.add_argument('--rtsp-url', default='rtsp://admin:Ntadg@7094@192.168.1.2:554/ch24/0', help='confidence threshold for face detection')
 
 args = ap.parse_args()
 
 main(args)
+
+

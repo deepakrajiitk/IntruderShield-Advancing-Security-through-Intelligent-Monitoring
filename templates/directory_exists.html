@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Directory Exists</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    <h1>Directory for {{ username }} already exists!</h1>
+    <p>What do you want to do?</p>
+    <ul>
+      <li><a href="{{ url_for('upload_photos_route', username=username) }}">Upload Photos</a></li>
+      <li><a href="{{ url_for('home') }}">Go Back</a></li>
+    </ul>
+  </body>
+</html>

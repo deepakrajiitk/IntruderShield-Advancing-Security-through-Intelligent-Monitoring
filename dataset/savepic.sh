@@ -3,7 +3,7 @@
 # Please note that this script will not kill ffmpeg program on its own. Please kill all ffmpeg programs manually, else they will continue to save pics
 
 declare -a cameras=(
-	[0]=ch24
+	[0]=ch07
 	# [1]=ch25
 	# [2]=ch26
 	# [3]=ch27
@@ -45,7 +45,7 @@ fi
 
 cd main/$cam
 
-ffmpeg -hide_banner -y -rtsp_transport tcp -use_wallclock_as_timestamps 1 -i "rtsp://admin:Ntadg@7094@192.168.1.2:554/$cam/0"  -f segment -reset_timestamps 1 -r 1 -f image2 -strftime 1 $cam-%Y%m%dT%H%M%S.jpg 1> /dev/null 2>/dev/null &
+ffmpeg -hide_banner -y -rtsp_transport tcp -use_wallclock_as_timestamps 1 -i "rtsp://admin:Ntadg@7094@192.168.1.68:554/$cam/0"  -f segment -reset_timestamps 1 -r 1 -f image2 -strftime 1 $cam-%Y%m%dT%H%M%S.jpg 1> /dev/null 2>/dev/null &
 
 # Save PID to kill it later
 echo $! >> ~/ffmpeg.pids
