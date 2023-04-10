@@ -5,3 +5,8 @@ dataset/main/
 dataset/authorized/*
 dataset/cropped_authorized/*
 src/__pycache__
+
+
+!dataset/test/.gitkeep
+!dataset/authorized/.gitkeep
+!dataset/cropped_authorized/.gitkeep
