@@ -87,10 +87,10 @@ def recognizer(args):
                     sim = rec.compute_sim(feat1, feat2)
                     if sim<0.15:
                         conclu = 'They are NOT the same person'
-                    # elif sim>=0.15 and sim<0.28 and sim>max_sim:
-                    #     name = names[i]+"**"
-                    #     max_sim = sim
-                    #     conclu = 'They are LIKELY TO be the same person'
+                    elif sim>=0.15 and sim<0.28 and sim>max_sim:
+                        name = names[i]+"**"
+                        max_sim = sim
+                        conclu = 'They are LIKELY TO be the same person'
                     elif sim>max_sim:
                         name = names[i]
                         max_sim = sim
@@ -118,13 +118,13 @@ def recognizer(args):
         cv2.imwrite(output_path, img)
 
 
-# ap = argparse.ArgumentParser()
-# ap.add_argument('--input-dir', default='../dataset/test/ch24', help='path to the input directory containing the images to be recognized')
-# ap.add_argument('--output-dir', default='../results', help='path to the output directory where the result images will be saved')
-# ap.add_argument('--embed-dir', default='../dataset/cropped_authorized', help='path to the directory containing the authorized embeddings')
-# ap.add_argument('--rec-model-name', default='w600k_r50.onnx', help='recognizer model name')
-# ap.add_argument('--detector-thres', default=0.8, help='confidence threshold for face detection')
+ap = argparse.ArgumentParser()
+ap.add_argument('--input-dir', default='../dataset/test/ch24', help='path to the input directory containing the images to be recognized')
+ap.add_argument('--output-dir', default='../results', help='path to the output directory where the result images will be saved')
+ap.add_argument('--embed-dir', default='../dataset/cropped_authorized', help='path to the directory containing the authorized embeddings')
+ap.add_argument('--rec-model-name', default='w600k_r50.onnx', help='recognizer model name')
+ap.add_argument('--detector-thres', default=0.8, help='confidence threshold for face detection')
 
-# args = ap.parse_args()
+args = ap.parse_args()
 
-# recognizer(args)
+recognizer(args)

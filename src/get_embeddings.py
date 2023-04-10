@@ -34,38 +34,39 @@ def main(args):
 
     # Loop over the subdirectories in the input directory
     for subdir in os.listdir(input_dir):
-        # Create a new directory for the cropped faces of this person
-        person_dir = os.path.join(output_dir, subdir)
-        os.makedirs(person_dir, exist_ok=True)
+        if os.path.isdir(subdir):
+            # Create a new directory for the cropped faces of this person
+            person_dir = os.path.join(output_dir, subdir)
+            os.makedirs(person_dir, exist_ok=True)
 
-        # Loop over the images of this person in the subdirectory
-        for filename in os.listdir(os.path.join(input_dir, subdir)):
-            # Load the image
-            img_path = os.path.join(input_dir, subdir, filename)
-            img = cv2.imread(img_path)
-            print(f"Processing images for person {subdir}")
+            # Loop over the images of this person in the subdirectory
+            for filename in os.listdir(os.path.join(input_dir, subdir)):
+                # Load the image
+                img_path = os.path.join(input_dir, subdir, filename)
+                img = cv2.imread(img_path)
+                print(f"Processing images for person {subdir}")
 
-            # Detect the faces in the image
-            faces = RetinaFace.detect_faces(img, confidence_thresh)
+                # Detect the faces in the image
+                faces = RetinaFace.detect_faces(img, confidence_thresh)
 
-            if isinstance(faces, dict):
-                # Loop over the detected faces and save the cropped faces in the output directory
-                for i, face in enumerate(faces):
-                    x1, y1, x2, y2 = faces[face]['facial_area']
-                    face_img = img[y1:y2, x1:x2]
+                if isinstance(faces, dict):
+                    # Loop over the detected faces and save the cropped faces in the output directory
+                    for i, face in enumerate(faces):
+                        x1, y1, x2, y2 = faces[face]['facial_area']
+                        face_img = img[y1:y2, x1:x2]
 
-                    # Resize the face image to match the input size of the ONNX model
-                    face_img = cv2.resize(face_img, (112, 112))
-                    landmarks = faces[face]['landmarks']
-                    landmarks = np.array([[landmarks["right_eye"][0], landmarks["right_eye"][1]], [landmarks["left_eye"][0], landmarks["left_eye"][1]], [landmarks["nose"][0], landmarks["nose"][1]],
-                                [landmarks["mouth_right"][0], landmarks["mouth_right"][1]], [landmarks["mouth_left"][0], landmarks["mouth_left"][1]]])
-                    embd = rec.get(img, landmarks)
-                    embeddings.append(embd)
-                    names.append(subdir)
+                        # Resize the face image to match the input size of the ONNX model
+                        face_img = cv2.resize(face_img, (112, 112))
+                        landmarks = faces[face]['landmarks']
+                        landmarks = np.array([[landmarks["right_eye"][0], landmarks["right_eye"][1]], [landmarks["left_eye"][0], landmarks["left_eye"][1]], [landmarks["nose"][0], landmarks["nose"][1]],
+                                    [landmarks["mouth_right"][0], landmarks["mouth_right"][1]], [landmarks["mouth_left"][0], landmarks["mouth_left"][1]]])
+                        embd = rec.get(img, landmarks)
+                        embeddings.append(embd)
+                        names.append(subdir)
 
-                    # Save the cropped face image in the person's directory
-                    output_path = os.path.join(person_dir, f"{filename.split('.')[0]}_{i}.jpg")
-                    cv2.imwrite(output_path, face_img)
+                        # Save the cropped face image in the person's directory
+                        output_path = os.path.join(person_dir, f"{filename.split('.')[0]}_{i}.jpg")
+                        cv2.imwrite(output_path, face_img)
 
     np.save(os.path.join(output_dir, "embeddings.npy"), np.array(embeddings))
     np.save(os.path.join(output_dir, "names.npy"), np.array(names))
