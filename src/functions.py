@@ -17,6 +17,7 @@ def sendSMS(name, roomnumber, msg):
     # Print the message ID
     print('Message sent with ID:', message.sid)
 
+
 def create_directory(username):
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     dataset_dir = os.path.join(parent_dir, '..', 'dataset')
@@ -28,8 +29,9 @@ def create_directory(username):
     else:
         return False
 
+
 def upload_photos(username, files, text_input):
-     # Get the user's directory path
+    # Get the user's directory path
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     dataset_dir = os.path.join(parent_dir, '..', 'dataset')
     user_dir = os.path.join(dataset_dir, 'authorized', username)
