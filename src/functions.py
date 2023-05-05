@@ -1,4 +1,5 @@
 import os
+from collections import OrderedDict
 # from twilio.rest import Client
 
 
@@ -16,6 +17,33 @@ def sendSMS(name, roomnumber, msg):
 
     # Print the message ID
     print('Message sent with ID:', message.sid)
+
+# clear those names from dictionary whose probablity has become 0
+
+
+def update_ordered_dict(prev_objects: OrderedDict, decrement: float) -> OrderedDict:
+    for key in list(prev_objects.keys()):
+        centroid, prob = prev_objects[key]
+        prob = prob - decrement
+        if prob > 0:
+            prev_objects[key] = (centroid, prob)
+        else:
+            prev_objects.pop(key)
+    return prev_objects
+
+
+# Define distance function
+def findCosineDistance(vector1, vector2):
+    """
+    Calculate cosine distance between two vector
+    """
+    vec1 = vector1.flatten()
+    vec2 = vector2.flatten()
+
+    a = np.dot(vec1.T, vec2)
+    b = np.dot(vec1.T, vec1)
+    c = np.dot(vec2.T, vec2)
+    return 1 - (a/(np.sqrt(b)*np.sqrt(c)))
 
 
 def create_directory(username):

@@ -1,17 +1,57 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, Response
 from flask import Flask, request, jsonify
 from src.functions import create_directory, upload_photos
+from src.recognizer_rtsp import Recognizer
+from src.functions import update_ordered_dict
+from collections import OrderedDict
 import sys
 import os
-import argparse
+import cv2
+
 # Add the path of the src directory to the Python path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
 app = Flask(__name__)
 
+
+def run(url, camera_id):
+    cap = cv2.VideoCapture(url)
+    rec_obj = Recognizer()
+    # Initialize variables for face tracking
+    prev_objects = OrderedDict()
+    frame_count = 0
+    while True:
+        success, frame = cap.read()
+        if not success:
+            break
+        else:
+            frame, known, unknown_count = rec_obj.recognizer(
+                frame, prev_objects)
+            prev_objects = update_ordered_dict(prev_objects, 0.2)
+            rec_obj.save_logs(known, unknown_count)
+            rec_obj.save_image(frame, camera_id+"_"+str(frame_count)+".jpg")
+            # encode the frame as a JPEG image
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        frame_count += 1
+
+
 @app.route('/')
+def index():
+    return render_template('index.html')
+
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(run("test.mp4", "camera"), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/home')
 def home():
     return render_template('home.html')
+
 
 @app.route('/create_directory', methods=['POST'])
 def create_directory_route():
@@ -20,6 +60,7 @@ def create_directory_route():
         return redirect(url_for('upload_photos_route', username=username))
     else:
         return render_template('directory_exists.html', username=username)
+
 
 @app.route('/upload_photos/<username>', methods=['GET', 'POST'])
 def upload_photos_route(username):
@@ -33,34 +74,7 @@ def upload_photos_route(username):
         return upload_photos(username, files, text_input)
     else:
         return render_template('upload.html', username=username)
-    
 
-@app.route('/recognize', methods=['GET', 'POST'])
-def recognize():
-    from src.recognizer import recognizer
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--input-dir', default='dataset/test/ch24', help='path to the input directory containing the images to be recognized')
-    ap.add_argument('--output-dir', default='results', help='path to the output directory where the result images will be saved')
-    ap.add_argument('--embed-dir', default='dataset/cropped_authorized', help='path to the directory containing the authorized embeddings')
-    ap.add_argument('--rec-model-name', default='w600k_r50.onnx', help='recognizer model name')
-    ap.add_argument('--detector-thres', default=0.8, help='confidence threshold for face detection')
-
-    args = ap.parse_args()
-
-    try:
-        # recognizer(args)
-        # read the content of the file
-        with open('results/run5/logs.txt', 'r') as f:
-            content = f.read()
-
-        # split the content into a list of lines
-        lines = content.split('\n')
-
-        # render the template with the lines as a context variable
-        return render_template('show_logs.html', lines=lines)
-    
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

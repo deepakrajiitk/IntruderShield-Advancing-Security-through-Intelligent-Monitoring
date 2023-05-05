@@ -8,6 +8,7 @@ import argparse
 from arcface_onnx import ArcFaceONNX
 import shutil
 
+
 def main(args):
     input_dir = args.input_dir
     output_dir = args.output_dir
@@ -59,13 +60,14 @@ def main(args):
                         face_img = cv2.resize(face_img, (112, 112))
                         landmarks = faces[face]['landmarks']
                         landmarks = np.array([[landmarks["right_eye"][0], landmarks["right_eye"][1]], [landmarks["left_eye"][0], landmarks["left_eye"][1]], [landmarks["nose"][0], landmarks["nose"][1]],
-                                    [landmarks["mouth_right"][0], landmarks["mouth_right"][1]], [landmarks["mouth_left"][0], landmarks["mouth_left"][1]]])
+                                              [landmarks["mouth_right"][0], landmarks["mouth_right"][1]], [landmarks["mouth_left"][0], landmarks["mouth_left"][1]]])
                         embd = rec.get(img, landmarks)
                         embeddings.append(embd)
                         names.append(subdir)
 
                         # Save the cropped face image in the person's directory
-                        output_path = os.path.join(person_dir, f"{filename.split('.')[0]}_{i}.jpg")
+                        output_path = os.path.join(
+                            person_dir, f"{filename.split('.')[0]}_{i}.jpg")
                         cv2.imwrite(output_path, face_img)
 
     np.save(os.path.join(output_dir, "embeddings.npy"), np.array(embeddings))
@@ -73,10 +75,14 @@ def main(args):
 
 
 ap = argparse.ArgumentParser()
-ap.add_argument('--input-dir', default='../dataset/authorized', help='path to the input directory containing the images of authorized people')
-ap.add_argument('--output-dir', default='../dataset/cropped_authorized', help='path to the output directory where the cropped faces will be saved')
-ap.add_argument('--rec-model-name', default='w600k_r50.onnx', help='recognizer model name')
-ap.add_argument('--detector-thres', default='0.8', help='confidence threshold for face detection')
+ap.add_argument('--input-dir', default='../dataset/authorized',
+                help='path to the input directory containing the images of authorized people')
+ap.add_argument('--output-dir', default='../dataset/cropped_authorized',
+                help='path to the output directory where the cropped faces will be saved')
+ap.add_argument('--rec-model-name', default='w600k_r50.onnx',
+                help='recognizer model name')
+ap.add_argument('--detector-thres', default='0.8',
+                help='confidence threshold for face detection')
 
 args = ap.parse_args()
 

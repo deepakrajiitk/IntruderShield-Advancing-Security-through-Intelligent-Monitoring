@@ -5,6 +5,7 @@ dataset/main/
 dataset/authorized/*
 dataset/cropped_authorized/*
 src/__pycache__
+*.mp4
 
 
 !dataset/test/.gitkeep
