@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Video Feed</title>
+    <title>CCTV Surveillance System</title>
   </head>
   <body>
-    <h1>Video Feed</h1>
-    <img src="{{ url_for('video_feed') }}" />
+    <h1>Welcome to CCTV Surveillance System</h1>
+    <button onclick="window.location.href='/add_person'">Add Authorized</button>
+    <button onclick="window.location.href='/show_rtsp'">Show RTSP Feed</button>
   </body>
 </html>

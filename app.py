@@ -43,14 +43,19 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/show_rtsp')
+def show_rtsp():
+    return render_template('show_rtsp.html')
+
+
 @app.route('/video_feed')
 def video_feed():
     return Response(run("test.mp4", "camera"), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-@app.route('/home')
-def home():
-    return render_template('home.html')
+@app.route('/add_person')
+def add_person():
+    return render_template('add_person.html')
 
 
 @app.route('/create_directory', methods=['POST'])
