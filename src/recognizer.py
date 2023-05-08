@@ -3,10 +3,25 @@ import cv2
 import numpy as np
 from retinaface import RetinaFace
 import onnxruntime as ort
-from arcface_onnx import ArcFaceONNX
 import os.path as osp
 import argparse
 from collections import OrderedDict
+from importlib import util
+
+
+# Get the absolute path of the directory containing this script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the absolute path to the arcfaceonnx.py module
+module_path = os.path.join(script_dir, "arcface_onnx.py")
+
+# Load the module using the absolute path
+spec = util.spec_from_file_location("arcface_onnx", module_path)
+arcfaceonnx_module = util.module_from_spec(spec)
+spec.loader.exec_module(arcfaceonnx_module)
+
+# Get the ArcFaceONNX class from the loaded module
+ArcFaceONNX = arcfaceonnx_module.ArcFaceONNX
 
 
 # Define distance function

@@ -4,11 +4,23 @@
 # @Time          : 2023-04-06
 # @Function      :
 
+import os
 import numpy as np
 import cv2
 import onnx
 import onnxruntime
-from . import face_align
+from importlib import util
+
+# Get the absolute path of the directory containing this script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the absolute path to the facealign.py module
+module_path = os.path.join(script_dir, "face_align.py")
+
+# Load the module using the absolute path
+spec = util.spec_from_file_location("facealign", module_path)
+face_align = util.module_from_spec(spec)
+spec.loader.exec_module(face_align)
 
 __all__ = [
     'ArcFaceONNX',
