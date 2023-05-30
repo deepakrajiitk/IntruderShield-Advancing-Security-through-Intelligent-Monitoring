@@ -1,8 +1,10 @@
 models/
 results/*
 dataset/test/*
+dataset/test_data/*
 dataset/main/
 dataset/authorized/*
+dataset/unauthorized/*
 dataset/cropped_authorized/*
 src/__pycache__
 *.mp4

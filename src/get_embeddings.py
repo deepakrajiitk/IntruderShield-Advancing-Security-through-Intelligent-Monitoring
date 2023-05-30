@@ -33,9 +33,11 @@ def main(args):
     embeddings = []
     names = []
 
+
     # Loop over the subdirectories in the input directory
     for subdir in os.listdir(input_dir):
-        if os.path.isdir(subdir):
+        full_path = os.path.join(input_dir, subdir)
+        if os.path.isdir(full_path):
             # Create a new directory for the cropped faces of this person
             person_dir = os.path.join(output_dir, subdir)
             os.makedirs(person_dir, exist_ok=True)
