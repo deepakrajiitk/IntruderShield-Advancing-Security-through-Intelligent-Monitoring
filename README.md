@@ -1,4 +1,4 @@
-# Face Detection and Recognition on CCTV Videos
+# IntruderShield: Advancing Security through Intelligent Monitoring
 
 This Git repo contains code for performing accurate face detection and recognition on CCTV videos using the RetinaFace model for face detection and InsightFace for face recognition.
 
