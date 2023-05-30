@@ -17,7 +17,7 @@ This Git repo contains code for performing accurate face detection and recogniti
 1. Clone the repo:
 
 ```bash
-git clone https://github.com/<your-username>/face-detection-recognition.git 
+git clone https://github.com/deepakrajiitk/IntruderShield-Advancing-Security-through-Intelligent-Monitoring.git
 ```
 
 2. Install the required Python packages:
